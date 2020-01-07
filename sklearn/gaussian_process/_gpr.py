@@ -349,11 +349,21 @@ class GaussianProcessRegressor(MultiOutputMixin,
                     L_inv = solve_triangular(self.L_.T,
                                              np.eye(self.L_.shape[0]))
                     self._K_inv = L_inv.dot(L_inv.T)
+                    
+                    ## Debugging ##
+                    from matplotlib import pyplot as plt
+                    plt.matshow(self._K_inv)
 
                 # Compute variance of predictive distribution
                 y_var = self.kernel_.diag(X)
                 y_var -= np.einsum("ij,ij->i",
                                    np.dot(K_trans, self._K_inv), K_trans)
+
+                ## Debugging ##
+                y_var_error = self.kernel_.diag(X)
+                y_var_error -= np.einsum("ij,ij->i",
+                                         np.dot(K_trans, self._K_inv), 
+                                         K_trans)
 
                 # Check if any of the variances is negative because of
                 # numerical issues. If yes: set the variance to 0.
@@ -362,7 +372,8 @@ class GaussianProcessRegressor(MultiOutputMixin,
                     warnings.warn("Predicted variances smaller than 0. "
                                   "Setting those variances to 0.")
                     y_var[y_var_negative] = 0.0
-                return y_mean, np.sqrt(y_var)
+                ##return y_mean, np.sqrt(y_var)
+                return y_mean, np.sqrt(y_var), y_var_error
             else:
                 return y_mean
 
