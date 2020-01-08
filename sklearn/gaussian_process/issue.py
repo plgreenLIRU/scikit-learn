@@ -4,7 +4,7 @@ from sklearn.gaussian_process.kernels import (DotProduct, ConstantKernel)
 from matplotlib import pyplot as plt
 
 kernel = (ConstantKernel(0.1, (0.01, 10.0)) *
-          (DotProduct(sigma_0=1.0, sigma_0_bounds=(0.1, 10.0)) ** 2))
+          (DotProduct(sigma_0=1.0, sigma_0_bounds=(0.1, 10.0))**2))
 
 # Specify Gaussian Process
 gp = GaussianProcessRegressor(kernel=kernel)
@@ -12,7 +12,7 @@ gp = GaussianProcessRegressor(kernel=kernel)
 # Generate data and fit GP
 rng = np.random.RandomState(4)
 X = rng.uniform(0, 5, 10)[:, np.newaxis]
-y = np.sin((X[:, 0] - 2.5) ** 2)
+y = np.sin((X[:, 0] - 2.5)**2)
 gp.fit(X, y)
 GaussianProcessRegressor(alpha=1e-10, copy_X_train=True,
                          kernel=0.316**2 * DotProduct(sigma_0=1)**2,
@@ -24,8 +24,7 @@ X_ = np.linspace(0, 5, 100)
 y_mean, y_std, y_var_error = gp.predict(X_[:, np.newaxis], return_std=True)
 
 # Identify the problem point
-i = np.where(y_var_error < 0)[0][0]
-print('\nNegative variance at point', i, 'where input is', X_[i] )
+print(y_var_error)
 
 # True values
 y_true = np.sin((X_ - 2.5) ** 2)
